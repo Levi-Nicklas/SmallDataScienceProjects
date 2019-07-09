@@ -10,6 +10,8 @@ In this repo you will find:
 - Chincoteague man made oyster reef success on recruitment. 
 
 - Generate all the idempotent elements of 2x2 matricies whose elements are in Z mod 6.
+
+- Analysis, visualization, and modeling of LeBron James and Michael Jordan's careers. 
     
 - ...hopefully more soon!
     
