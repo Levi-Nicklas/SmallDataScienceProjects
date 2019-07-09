@@ -9,7 +9,7 @@ In this repo you will find:
 
 - Chincoteague man made oyster reef success on recruitment. 
 
-- Generate all the idempotent elements of <img src="https://latex.codecogs.com/gif.latex? 2 \cross 2 matricies whose elements are in Z_{6}" /> 
+- Generate all the idempotent elements of 2x2 matricies whose elements are in Z mod 6.
     
 - ...hopefully more soon!
     
