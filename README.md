@@ -12,6 +12,8 @@ In this repo you will find:
 - Generate all the idempotent elements of 2x2 matricies whose elements are in Z mod 6.
 
 - Analysis, visualization, and modeling of LeBron James and Michael Jordan's careers. 
+
+- NBA 2014-2015 Season Shot Visualizations
     
 - ...hopefully more soon!
     
