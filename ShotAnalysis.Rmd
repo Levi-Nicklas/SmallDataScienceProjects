@@ -1,0 +1,164 @@
+---
+title: "NBA Shot Analytics"
+author: Levi C. Nicklas
+output: html_notebook
+---
+
+
+
+```{r Setup}
+library(tidyverse)
+library(corrplot)
+library(RColorBrewer)
+
+#14-15 SEASON DATA
+shots <- read.csv("shot_logs.csv")
+```
+
+```{r EDA 1}
+colnames(shots)
+summary(shots)
+
+# Number of Unique Players (Shooter)
+length(unique(shots$player_name)) 
+# Number of Unique Players (Defender)
+length(unique(shots$player_name))
+
+# Get only numeric columns from data
+shots_numeric <- shots[,c(5,6,7,9,10,11,12,13,18,19)]
+
+# See what vars are correlated.
+shots_numeric %>% 
+  drop_na() %>% 
+  cor() %>% 
+  corrplot(method = "circle")
+```
+
+
+```{r EDA 2}
+shots$FGM <- as.factor(shots$FGM)
+
+#Show How Steph and Kyrie compare from range
+shots%>% 
+  filter(player_name == "kyrie irving" |
+           player_name == "stephen curry") %>% 
+  group_by(player_name) %>%
+  ggplot(aes(FGM, SHOT_DIST, color = player_name)) +
+  geom_boxplot()+
+  geom_jitter(alpha = 0.1)+
+  scale_color_brewer(palette = "Set1")+
+  ggtitle("Made or Missed Shots by Distance for Steph and Kyrie")+
+  ylab("Shot Distance")+
+  xlab("Make or Miss")+
+  facet_wrap(~player_name)+
+  theme_minimal()
+  
+  
+# Show that Klay is a spot up shooter!
+shots%>% 
+  filter(player_name == "kyrie irving" |
+           player_name == "klay thompson"
+           ) %>% 
+  group_by(player_name) %>%
+  ggplot(aes(FGM, TOUCH_TIME, color = player_name)) +
+  geom_boxplot()+
+  geom_jitter(alpha = 0.15)+
+  scale_color_brewer(palette = "Set1")+
+  ggtitle("Touch Time of Made and Missed shots for Klay and Kyrie")+
+  ylab("Touch Time")+
+  xlab("Make or Miss")+
+  facet_wrap(~player_name)+
+  theme_minimal()
+  
+# Who is better under a contest?
+shots%>% 
+  filter(player_name == "kyrie irving" |
+           player_name == "stephen curry"
+           ) %>% 
+  group_by(player_name) %>%
+  ggplot(aes(FGM, CLOSE_DEF_DIST, color = player_name)) +
+  geom_boxplot()+
+  geom_jitter(alpha = 0.3)+
+  scale_color_brewer(palette = "Set1")+
+  ggtitle("Closest Defender and Shooting Success")+
+  ylab("Defender Distance (m)")+
+  xlab("Make or Miss")+
+  facet_wrap(~player_name)+
+  theme_minimal()
+
+```
+
+
+```{r EDA 3}
+shots <- read.csv("shot_logs.csv")
+
+
+
+shots %>% 
+  filter(SHOT_DIST < 35) %>% 
+  group_by(SHOT_DIST) %>% 
+  mutate(prop_made = sum(FGM)/length(FGM)) %>% 
+  ggplot(aes(SHOT_DIST, prop_made ))+
+  geom_line(color = "dark blue")+
+  geom_smooth(color = "orange")+
+  theme_minimal()+
+  ggtitle("NBA Shooting FG% by distance from Basket")+
+  xlab("Distance From Basket (ft)")+
+  ylab("FG%")
+```
+
+```{r EDA 4}
+library(ggrepel)
+
+dat1 <- shots %>% 
+  group_by(player_name) %>% 
+  mutate(fg_percent = sum(FGM)/length(FGM)) %>% 
+  group_by(player_name) %>% 
+  summarize(avg_def_dist = mean(CLOSE_DEF_DIST),
+            avg_fg_pct = mean(fg_percent),
+            avg_shot_dist = mean(SHOT_DIST))
+
+set.seed(23)
+dat1$sample <- sample(1:281, size = 281, replace = FALSE)
+
+dat1 %>% 
+  filter(sample > 261) %>% 
+  ggplot(aes(avg_shot_dist, avg_fg_pct)) +
+  geom_point(aes(color = avg_def_dist))+
+  scale_color_continuous(low = "orange", high = "light green")+
+  geom_text_repel(aes(label= player_name),hjust=0, vjust=0, alpha = 0.75)+
+  theme_minimal()+
+  ggtitle("Shooting Success of NBA Players in 2014-2015")+
+  ylab("Average FG%")+
+  xlab("Average Shot Distance (ft)")
+
+dat1 %>% 
+  ggplot(aes(avg_shot_dist, avg_fg_pct)) +
+  geom_density2d(color = "dark blue") +
+  geom_point(alpha = 0.75, color = "orange")+
+  theme_minimal()
+
+```
+
+```{r EDA 5}
+shots %>% 
+  ggplot(aes(SHOT_DIST))+
+  geom_histogram(binwidth = 0.3, color = "white", fill = "dark blue")+
+  ggtitle("Shot Distance")+
+  theme_minimal()+
+  xlab("Shot Distance (ft)")+
+  geom_vline(xintercept = 23.75, color = "orange", size = 1)
+
+```
+
+
+```{r EDA 6}
+
+
+```
+
+
+
+
+
+
