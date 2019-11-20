@@ -45,7 +45,7 @@ function_placeholder <- function() {
 
 object_placeholder <- function() invisible(NULL)
 
-oyster<-read_xlsx("oyster_data/OysterRealData.xlsx")
+oyster<-read_xlsx("OysterRealData.xlsx")
 
 ```
 
