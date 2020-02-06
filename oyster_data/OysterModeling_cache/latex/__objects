@@ -1,9 +1,0 @@
-table 	
-Sample Statistics	diff_xbar	x_bar_A	x_bar_B
-t-Tests	t_stat	t_stat_pval	ttest_means
-Permutation Testing: Means	obs_stat	p_value	perm_distribution
-unnamed-chunk-1	ratio_sigs	res_ftest	sig_sq_A	sig_sq_B
-Permutation Testing: Variance	obs_stat_2	p_value_2	perm_distribution_2
-Density Est	
-NLLS Model	fit_1	fit1	oyster_pred	oyster_pred_2	predictions
-QQPLOT	

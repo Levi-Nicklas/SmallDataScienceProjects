@@ -1,9 +1,0 @@
-table 	kable	oyster	c
-Sample Statistics	x_bar_A	oyster	%>%	filter	location	summarize	mean	oyster_count	x_bar_B	diff_xbar	ggplot	aes	geom_boxplot	geom_jitter	scale_color_brewer	xlab	ylab	labs	ggtitle	theme	element_text
-t-Tests	ttest_means	t.test	oyster	oyster_count	t_stat	statistic	t_stat_pval	p.value
-Permutation Testing: Means	set.seed	obs_stat	oyster	%>%	group_by	location	summarise	mean	oyster_count	diff	x_bar	pull	perm_distribution	rerun	mutate	sample	map_dfr	.	rep	replicate	ggplot	aes	stat	geom_histogram	geom_vline	labs	theme	element_text	p_value
-unnamed-chunk-1	sig_sq_A	oyster	%>%	filter	location	summarize	var	oyster_count	sig_sq_B	ratio_sigs	res_ftest	var.test
-Permutation Testing: Variance	set.seed	obs_stat_2	oyster	%>%	group_by	location	summarise	var	oyster_count	sig_sq	pull	perm_distribution_2	rerun	mutate	sample	map_dfr	.	rep	replicate	ggplot	aes	stat	geom_histogram	geom_vline	labs	theme	element_text	p_value_2	mean
-Density Est	oyster	%>%	ggplot	aes	oyster_count	geom_density	scale_x_continuous	c	labs	scale_color_brewer	ggtitle	theme	element_text	group_by	location
-NLLS Model	fit1	glm	oyster	oyster_dens	aer_exp	I	oyster_pred	cbind	predict	fit	`predict(fit1, interval = "confidence")`	%>%	mutate	fit_1	lm	predictions	oyster_pred_2	bind_cols	as.data.frame	data.frame	residuals	ggplot	aes	geom_point	location	geom_line	geom_vline	scale_color_brewer	scale_x_continuous	c	xlab	ylab	ggtitle	theme	element_text
-QQPLOT	library	ggplot	oyster_pred_2	aes	residuals	stat_qq_line	stat_qq_point	stat_qq_band	labs	theme	element_text
