@@ -1,0 +1,60 @@
+---
+title: "Linear Discriminant Analysis"
+output: html_notebook
+---
+
+# The Data
+
+```{r, message = F, include=FALSE}
+library(dslabs)
+library(tidyverse)
+```
+
+Let's look at this data.
+```{r}
+head(dslabs::olive)
+```
+
+So I want to classify the region, area, or a combination of the two based on the acids in the olive oils. Let's see how many classes we are going to try to predict.
+
+```{r}
+dslabs::olive %>% 
+  group_by(region, area) %>% 
+  count()
+```
+
+So there are 3 regions, and 9 areas. Since each area only belongs to a single region, we can either predict 3 region classes or 9 area classes. 
+
+I'll begin by predicting the region classes.
+
+# Region Classification
+
+## Pre-Processing
+I think we have some pre-processing to do before we jump into modeling. 
+
+```{r}
+dslabs::olive %>% 
+  group_by(region) %>% 
+  count() %>% 
+  ggplot(aes(region, n, fill = region)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Accent") +
+  labs(x = "Region", y = "Count", fill = "") +
+  theme_minimal()
+```
+
+First, we have some class imbalance that may be good to address. 
+
+Second, while we arent dealing with extremely high dimensionality, we have enough independant variables to make visualizaion difficult. For that reason, before plotting we will perform a prinicipal component analysis transform and see if we can operate in two dimensions moving forward. 
+
+Third, we need to split classes here. I'm thinking we will split after dealing with the class imbalance, and save some data for validation. We will do k-folding to get accurate estimates of what the parameters are.
+
+
+
+
+
+
+
+
+
+
