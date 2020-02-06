@@ -50,6 +50,35 @@ Second, while we arent dealing with extremely high dimensionality, we have enoug
 Third, we need to split classes here. I'm thinking we will split after dealing with the class imbalance, and save some data for validation. We will do k-folding to get accurate estimates of what the parameters are.
 
 
+### Class Imbalance
+Let's begin with the class imbalance. Since Sardina has 98 entries, I will use all of those, but only sample 98 from each of the other two regions as well to balance the dataset. This will leave us with 294 observations that we will build our classifier on. We can use the extra observations from the Northern and Southern Italy region as validation data to check how robust our model is.
+
+```{r}
+set.seed(23)
+
+NI_olives <- dslabs::olive %>% 
+  filter(region == "Northern Italy") %>% 
+  sample_n(98)
+
+SI_olives <- dslabs::olive %>% 
+  filter(region == "Southern Italy") %>% 
+  sample_n(98)
+
+SD_olives <- dslabs::olive %>% 
+  filter(region == "Sardinia")
+
+balanced_data <- rbind(NI_olives, SI_olives, SD_olives)
+rm(NI_olives, SI_olives, SD_olives)
+
+summary(balanced_data)
+```
+
+We ended up with some imbalace in the area sub-class, but that is not our concern right now, so we will proceed.
+
+## Dimensionality Reduction
+
+Since we have 8 different acids that act as predictors in our dataset, 
+
 
 
 
