@@ -3,17 +3,28 @@ title: "Linear Discriminant Analysis"
 output: html_notebook
 ---
 
-# The Data
+
 
 ```{r, message = F, include=FALSE}
 library(dslabs)
 library(tidyverse)
+library(caret)
 ```
 
+# Project
+
+This project is a demonstration of linear discriminant analysis in `R` using popular tools from the `tidyverse`. In this project I examine a dataset that contains information on the acids found in olive oils.
+
+![](https://cdn.drweil.com/wp-content/uploads/2016/12/diet-nutrition_nutrition_olive-oil-fraud_2382x2063_000079492729.jpg)
+
+# The Data
 Let's look at this data.
 ```{r}
 head(dslabs::olive)
 ```
+
+
+
 
 So I want to classify the region, area, or a combination of the two based on the acids in the olive oils. Let's see how many classes we are going to try to predict.
 
@@ -23,7 +34,7 @@ dslabs::olive %>%
   count()
 ```
 
-So there are 3 regions, and 9 areas. Since each area only belongs to a single region, we can either predict 3 region classes or 9 area classes. 
+So there are 3 regions, and 9 areas. Since each area only belongs to a single region, we can either predict 3 `region` classes or 9 `area` classes. 
 
 I'll begin by predicting the region classes.
 
@@ -39,8 +50,9 @@ dslabs::olive %>%
   ggplot(aes(region, n, fill = region)) +
   geom_col() +
   scale_fill_brewer(palette = "Accent") +
-  labs(x = "Region", y = "Count", fill = "") +
-  theme_minimal()
+  labs(x = "Region", y = "Count", fill = "",
+       title = "dslabs::olive Class Balance") +
+  theme_classic() 
 ```
 
 First, we have some class imbalance that may be good to address. 
@@ -51,21 +63,22 @@ Third, we need to split classes here. I'm thinking we will split after dealing w
 
 
 ### Class Imbalance
-Let's begin with the class imbalance. Since Sardina has 98 entries, I will use all of those, but only sample 98 from each of the other two regions as well to balance the dataset. This will leave us with 294 observations that we will build our classifier on. We can use the extra observations from the Northern and Southern Italy region as validation data to check how robust our model is.
+Let's begin with the class imbalance. Since Sardina has 98 entries, I will sample 80 of those, and only sample 98 from each of the other two regions as well to balance the dataset. This will leave us with 240 observations that we will build our classifier on. We can use the extra observations as validation data to check how robust our model is.
 
 ```{r}
 set.seed(23)
 
 NI_olives <- dslabs::olive %>% 
   filter(region == "Northern Italy") %>% 
-  sample_n(98)
+  sample_n(80)
 
 SI_olives <- dslabs::olive %>% 
   filter(region == "Southern Italy") %>% 
-  sample_n(98)
+  sample_n(80)
 
 SD_olives <- dslabs::olive %>% 
-  filter(region == "Sardinia")
+  filter(region == "Sardinia") %>% 
+  sample_n(80)
 
 balanced_data <- rbind(NI_olives, SI_olives, SD_olives)
 rm(NI_olives, SI_olives, SD_olives)
@@ -73,11 +86,50 @@ rm(NI_olives, SI_olives, SD_olives)
 summary(balanced_data)
 ```
 
-We ended up with some imbalace in the area sub-class, but that is not our concern right now, so we will proceed.
+We ended up with some imbalace in the `area` sub-class, but that is not our concern right now, so we will proceed.
 
-## Dimensionality Reduction
+### Dimensionality Reduction
 
-Since we have 8 different acids that act as predictors in our dataset, 
+Since we have 8 different acids that act as predictors in our dataset, I am going to see if I can reduce the dimensionality with principal component analysis.
+
+```{r}
+bal_X <- balanced_data[,c(-1,-2)]
+bal_Y <- balanced_data[,c(1,2)]
+
+library(corrplot)
+cor(bal_X) %>% 
+  corrplot()
+```
+
+Our data looks like there are some strong correlations between different variables; the principal component analysis should work great on this data.
+
+But first, since our data have differing numeric ranges, we should standardize the data prior to performing PCA.
+
+```{r}
+bal_olive_pca <- prcomp(bal_X, center = TRUE, scale. = TRUE)
+summary(bal_olive_pca)
+```
+
+Somewhat disappointingly, the PCA only captures 64% of the variance in the first two components. We can still use this for plotting, but at this point we dont gain much simplicity by using 5 predictors as opposed to 8. SO for modeling purposes, I am *not* going to include a PCA preprocessing step. 
+
+### Standardization
+
+Before we build a model I am simply going to standardize the data.
+
+```{r}
+bal_X_scaled <- scale(bal_X, center = T, scale = T)
+summary(bal_X_scaled)
+```
+
+
+## Visualization 1
+
+
+
+
+
+
+
 
 
 
