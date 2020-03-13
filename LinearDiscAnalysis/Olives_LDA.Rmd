@@ -70,15 +70,15 @@ set.seed(23)
 
 NI_olives <- dslabs::olive %>% 
   filter(region == "Northern Italy") %>% 
-  sample_n(80)
+  sample_n(80, replace = F)
 
 SI_olives <- dslabs::olive %>% 
   filter(region == "Southern Italy") %>% 
-  sample_n(80)
+  sample_n(80, replace = F)
 
 SD_olives <- dslabs::olive %>% 
   filter(region == "Sardinia") %>% 
-  sample_n(80)
+  sample_n(80, replace = F)
 
 balanced_data <- rbind(NI_olives, SI_olives, SD_olives)
 rm(NI_olives, SI_olives, SD_olives)
@@ -112,23 +112,48 @@ summary(bal_olive_pca)
 
 Somewhat disappointingly, the PCA only captures 64% of the variance in the first two components. We can still use this for plotting, but at this point we dont gain much simplicity by using 5 predictors as opposed to 8. SO for modeling purposes, I am *not* going to include a PCA preprocessing step. 
 
-### Standardization
-
-Before we build a model I am simply going to standardize the data.
+But I am going to hold onto the PCA rotation, and we can use the first two components for plotting our data points and look at the classification of our points. First, let's look at the `balanced_data` that we made.
 
 ```{r}
-bal_X_scaled <- scale(bal_X, center = T, scale = T)
-summary(bal_X_scaled)
+pc12_olives_bal <- data.frame(as.factor(balanced_data$region),
+                         bal_olive_pca$x[,1],
+                         bal_olive_pca$x[,2]) 
+colnames(pc12_olives_bal) <- c("region", "PC1", "PC2")
+pc12_olives_bal <- as.data.frame(pc12_olives_bal)
+
+
+p1 <- pc12_olives_bal %>% 
+  group_by(region) %>% 
+  ggplot(aes(PC1, PC2, color = as.factor(region))) +
+  geom_point() +
+  geom_density_2d()+
+  scale_color_brewer(palette = "Accent") +
+  labs(x = "PC1", y = "PC2", color = "",
+       title = "dslabs::olives classes in PC1 & PC2") +
+  theme_classic()+
+  theme(legend.position = "bottom")
+
+p1
+
+```
+Great to not throw that away! This looks like we should be able seperate these classes very easily.
+
+I am going to try classifying with these first two components, as this will allow for great visualizations.
+
+### Linear Discriminant Analysis
+
+The idea behind linear discriminant analysis is that all of our points are projected on a line, and then the best seperating values are located. This line that we project onto is not necessarily an axis line, but let's see what the distribution of points on the axes looks like.
+
+
+```{r}
+library(ggExtra)
+
+ggExtra::ggMarginal(p1, pc12_olives_bal, x = PC1, y = PC2, groupFill = TRUE)
 ```
 
+So, if I told you we could *only* use `PC1` or `PC2` for our LDA, which would be best? 
 
-## Visualization 1
-
-
-
-
-
-
+`PC1` would be best. The distributions have the best seperation on this axis. `PC2` we see Northern Italy with a weird bimodal distribution, and Sardina sharing almost the same distribution as Southern Italy.
 
 
 
