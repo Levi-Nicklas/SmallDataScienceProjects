@@ -156,6 +156,11 @@ So, if I told you we could *only* use `PC1` or `PC2` for our LDA, which would be
 `PC1` would be best. The distributions have the best seperation on this axis. `PC2` we see Northern Italy with a weird bimodal distribution, and Sardina sharing almost the same distribution as Southern Italy.
 
 
+Time to do our LDA model!
+
+
+
+
 
 
 
