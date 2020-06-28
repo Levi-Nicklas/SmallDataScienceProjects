@@ -8,11 +8,20 @@ library(tidyverse)
 
 
 mushrooms <- readr::read_csv("mushrooms.csv", 
-col_types = as.list(rep("c", 23)))
+col_types = as.list(rep("f", 23)))
 # Some parsing failures, need to revisit. 
 
+
+# Change names
+library(janitor)
+
+
+mushrooms <- janitor::clean_names(mushrooms)
+colnames(mushrooms)[1] <- "safe"
 ```
 
+
+![](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fblog.kitchenwarehouse.com.au%2Fwp-content%2Fuploads%2FDifferent-Types-of-Mushrooms.jpg&f=1&nofb=1)
 
 # Introduction
 
@@ -20,7 +29,7 @@ This is a dataset of mushrooms and 23 characteristics, and 23 species of mushroo
 
 **Dataset feature summary:**
 
-- `class` : classes: edible=e, poisonous=p
+- `safe` : classes: edible=e, poisonous=p
 
 - `cap-shape` :  bell=b,conical=c,convex=x,flat=f, knobbed=k,sunken=s
 
@@ -85,11 +94,51 @@ This is a dataset of mushrooms and 23 characteristics, and 23 species of mushroo
 
 # Classes Look balanced
 mushrooms %>% 
-  group_by(class) %>% 
+  group_by(safe) %>% 
   count()
 ```
 
 
 # Edible or Not?
+
+I think a nice natural choice for this problem would be a tree based problem. A decision tree is very easy for anyone to interpret and would be the best choice to help pick if a mushrooms is edible or not. 
+
+For our first go, we will build a plain decision tree and see how it does. I'll use an 80/20 train-test split for our data.
+
+```{r Train-Test Split, message = F}
+set.seed(23)
+# Get 80% of the data for training.
+train_df <- sample_n(mushrooms,
+                     size = round(nrow(mushrooms)*0.8),
+                     replace = F)
+
+# Get remaining observations for test set.
+test_df <- anti_join(mushrooms, train_df)
+```
+
+
+```{r Tree 1}
+library(tree)
+
+d_tree_1 <- tree(formula = safe ~ . ,data = train_df)
+
+summary(d_tree_1)
+```
+
+Now, to assess our tree's performance.
+
+```{r Tree 1 Stats}
+# 0 Incorrect in training set.
+sum(!(d_tree_1$y == train_df$safe))
+
+test_results <- predict(d_tree_1, newdata = test_df) %>% 
+  as.data.frame() %>% 
+  mutate(eat = ifelse(e > 0.5, "e","p")) %>% 
+  select(eat)
+
+# 3 incorrect for the test set! Uh oh!
+sum(!(test_results$eat == test_df$safe))
+```
+
 
 
