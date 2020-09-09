@@ -81,16 +81,16 @@ This is a dataset of mushrooms and 23 characteristics, and 23 species of mushroo
 
 ```{r }
 # Might do something with this later.
-# mushrooms %>% 
-#   pivot_longer(cols = colnames(mushrooms)[2:23]) %>% 
-#   group_by(class, name, value) %>% 
-#   count() %>% 
-#   ungroup() %>% 
-#   group_by(class) %>% 
+# mushrooms %>%
+#   pivot_longer(cols = colnames(mushrooms)[2:23]) %>%
+#   group_by(safe, name, value) %>%
+#   count() %>%
+#   ungroup() %>%
+#   group_by(safe) %>%
 #   ggplot(aes(name,value, fill = n)) +
 #   geom_tile() +
 #   coord_flip()+
-#   facet_wrap(~class)
+#   facet_wrap(~safe)
 
 # Classes Look balanced
 mushrooms %>% 
@@ -134,11 +134,15 @@ sum(!(d_tree_1$y == train_df$safe))
 test_results <- predict(d_tree_1, newdata = test_df) %>% 
   as.data.frame() %>% 
   mutate(eat = ifelse(e > 0.5, "e","p")) %>% 
-  select(eat)
+  dplyr::select(eat)
 
 # 3 incorrect for the test set! Uh oh!
 sum(!(test_results$eat == test_df$safe))
 ```
 
+```{r}
+
+
+```
 
 

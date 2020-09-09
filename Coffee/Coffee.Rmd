@@ -1,0 +1,72 @@
+---
+title: "Coffee"
+author: "Levi C. Nicklas"
+date: "9/8/2020"
+output: 
+  html_notebook:
+    theme: united
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Get TidyTuesday dataset.
+coffee_ratings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-07-07/coffee_ratings.csv')
+
+library(tidyverse)
+library(caret)
+```
+
+
+# Introduction
+
+
+# Some section
+
+```{r}
+coffee <- coffee_ratings %>% 
+  dplyr::select(species,
+                altitude_low_meters:altitude_high_meters,
+                aroma:moisture) %>% 
+  drop_na()
+```
+
+
+```{r}
+coffee_norm <- preProcess(coffee[,4:14], method = "range")
+coffee_norm <- predict(coffee_norm, coffee)
+
+# Keep this?
+coffee_norm %>% 
+  pivot_longer(cols = c(4:14)) %>% 
+  ggplot()+
+  geom_histogram(aes(value), color = "white", fill = "brown") + 
+  facet_wrap(~name) +
+  theme_light()
+```
+
+```{r}
+
+
+
+
+```
+
+
+
+```{r}
+coffee_pca <- prcomp(coffee_norm[,4:14])
+summary(coffee_pca)
+
+coffee_pca <- cbind(coffee_norm[,1:3],coffee_pca$x)
+
+coffee_pca %>% 
+  ggplot(aes(x = PC1, y = PC2),) +
+  geom_point(aes(color = as.factor(species))) +
+  ylim(c(-1,1)) +
+  geom_smooth(method = "lm")
+  
+
+```
